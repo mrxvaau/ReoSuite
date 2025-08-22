@@ -1,6 +1,6 @@
 
 # Demo Reo program
-let name be "Joy".
+let name be "MrX".
 say "Hello, " plus name plus "!".
 
 to add(a, b):
