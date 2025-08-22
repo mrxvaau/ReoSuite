@@ -1,0 +1,53 @@
+
+<Window x:Class="Reo.Studio.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Reo Studio" Height="720" Width="1080">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="8" Grid.Row="0">
+            <Button Name="NewBtn" Click="NewBtn_Click" Margin="0,0,8,0" Padding="12,6">New</Button>
+            <Button Name="OpenBtn" Click="OpenBtn_Click" Margin="0,0,8,0" Padding="12,6">Open</Button>
+            <Button Name="SaveBtn" Click="SaveBtn_Click" Margin="0,0,8,0" Padding="12,6">Save</Button>
+            <Separator Width="12"/>
+            <Button Name="CompileBtn" Click="CompileBtn_Click" Margin="0,0,8,0" Padding="12,6">Compile</Button>
+            <Button Name="RunBtn" Click="RunBtn_Click" Margin="0,0,8,0" Padding="12,6">Run</Button>
+            <TextBlock Text="Output EXE:" VerticalAlignment="Center" Margin="16,0,6,0"/>
+            <TextBox Name="ExePathBox" Width="380" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBox Name="Editor"
+                     FontFamily="Consolas" FontSize="14"
+                     AcceptsReturn="True" AcceptsTab="True"
+                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                     TextWrapping="NoWrap"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Build Diagnostics" Margin="0,0,8,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBox Name="BuildOutput" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" BorderThickness="0"
+                             FontFamily="Consolas" FontSize="13"/>
+                </ScrollViewer>
+            </GroupBox>
+            <GroupBox Header="Run Output" Grid.Column="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBox Name="RunOutput" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" BorderThickness="0"
+                             FontFamily="Consolas" FontSize="13"/>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</Window>
