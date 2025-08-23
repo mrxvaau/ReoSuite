@@ -2,28 +2,397 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reo – Code Like You Speak</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reo — Code Like You Speak</title>
+  <meta name="description" content="Reo is a beginner-friendly, natural language programming language and IDE built with love in C# — code like you speak." />
+  <meta name="theme-color" content="#2563eb" />
+  <!-- Emoji favicon (single-file, no assets) -->
+  <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.86em' font-size='82'%3E%F0%9F%8C%B8%3C/text%3E%3C/svg%3E">
   <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 800px; margin: auto; }
-    h1 { color: #9146ff; }
-    p, li { font-size: 1.1rem; }
-    code { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 4px; }
+    /* --- Base & theme ----------------------------------------------------- */
+    :root{
+      --bg: #ffffff;
+      --bg-soft: #f6faff;          /* soft blue-tinted white */
+      --text: #0b1221;             /* deep navy */
+      --muted: #55627a;            /* slate */
+      --primary: #2563eb;          /* blue-600 */
+      --primary-700:#1e40af;       /* blue-800 */
+      --accent: #0ea5e9;           /* sky-500 */
+      --border:#e6eefc;            /* pale blue */
+      --card:#ffffff;
+      --ring: rgba(37,99,235,.35);
+      --shadow: 0 10px 30px rgba(2,38,112,.10);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+            Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    ::selection{ background: rgba(37,99,235,.18); }
+    a{ color: var(--primary); text-decoration: none; }
+    a:hover{ text-decoration: underline; text-underline-offset: .2em; }
+    :focus-visible{ outline: 3px solid var(--ring); outline-offset: 3px; border-radius: 6px; }
+    .skip-link{
+      position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
+    }
+    .skip-link:focus{ left:16px; top:16px; width:auto; height:auto; padding:.5rem .75rem; background:#fff; border:1px solid var(--border); border-radius:10px; z-index:999; }
+    .container{ width:min(1100px, 92%); margin-inline:auto; }
+
+    /* --- Top background flourish ----------------------------------------- */
+    .site-header{
+      background:
+        radial-gradient(900px 900px at 10% -20%, #eaf2ff 20%, transparent 50%),
+        radial-gradient(900px 900px at 90% -30%, #e0f2fe 15%, transparent 55%),
+        #fff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* --- Nav -------------------------------------------------------------- */
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:1rem; padding: .9rem 0;
+    }
+    .brand{
+      display:inline-flex; align-items:center; gap:.6rem; font-weight:800; letter-spacing:.2px;
+      color: var(--text); text-decoration:none;
+    }
+    .brand-badge{
+      display:grid; place-items:center;
+      width:36px; height:36px; border-radius:10px;
+      background: linear-gradient(180deg, #e6f0ff, #dfeaff);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(2,38,112,.08) inset;
+      font-size: 18px;
+    }
+    .nav-actions{ display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .nav-link{ font-weight:600; color: var(--primary); }
+    .button{
+      display:inline-flex; align-items:center; gap:.55rem;
+      padding:.72rem 1rem; border-radius:12px; font-weight:700;
+      border:1px solid var(--border); background:#fff; box-shadow: 0 1px 10px rgba(2,37,103,.05);
+      text-decoration:none; transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      will-change: transform;
+    }
+    .button:hover{ transform: translateY(-1px); box-shadow: 0 8px 22px rgba(2,37,103,.10); text-decoration:none; }
+    .button.primary{
+      color:#fff; border-color:#1e56e0;
+      background: linear-gradient(180deg, #2d6ef2, #1f56e1);
+      box-shadow: 0 10px 24px rgba(37,99,235,.28);
+    }
+    .button.ghost{ color: var(--primary); background:#fff; }
+    .button.ghost:hover{ background:#f5f9ff; }
+
+    /* --- Hero ------------------------------------------------------------- */
+    .hero{
+      display:grid; align-items:center; gap:2rem; padding: 3.5rem 0 3rem;
+      grid-template-columns: 1.08fr .92fr;
+    }
+    .hero h1{
+      margin:0 0 .5rem 0;
+      font-weight:900;
+      font-size: clamp(2rem, 5vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: -.02em;
+    }
+    .accent{ color: var(--primary); }
+    .lead{ font-size: 1.125rem; color: var(--muted); max-width: 58ch; }
+    .cta{ display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.2rem; }
+
+    /* --- Code card -------------------------------------------------------- */
+    .code-card{
+      position:relative; overflow:hidden;
+      background: var(--card); border:1px solid var(--border);
+      border-radius: 16px; box-shadow: var(--shadow);
+    }
+    .code-card::before{
+      content:""; position:absolute; inset:-40% -40% auto auto; height:180px; width:180px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(37,99,235,.12), transparent 70%);
+      transform: translate(20%, -20%);
+      pointer-events:none;
+    }
+    .code-titlebar{
+      display:flex; align-items:center; gap:.45rem;
+      padding:.55rem .7rem; border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg, #f5f9ff, #eef6ff);
+      font-size:.92rem; color: var(--muted);
+    }
+    .dot{ width:.72rem; height:.72rem; border-radius:50%; background:#cfe0ff; }
+    .code-titlebar strong{ margin-left:.25rem; font-weight:700; }
+    .copy{
+      margin-left:auto; padding:.32rem .6rem; border-radius:8px; border:1px solid var(--border);
+      background:#fff; color: var(--text); font: 600 .85rem/1 ui-sans-serif, system-ui;
+      box-shadow: 0 1px 0 rgba(0,0,0,.04);
+      cursor:pointer;
+    }
+    .copy:hover{ border-color:#bfd3ff; background:#f9fbff; }
+    .copy.copied{ background:#ecf4ff; border-color:#b6ccff; }
+    pre{ margin:0; padding:1rem 1rem 1.1rem 1rem; overflow:auto; }
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .98rem; background: transparent; color:#0f172a;
+    }
+
+    /* --- Sections --------------------------------------------------------- */
+    main section{ padding: 3.25rem 0; }
+    .section-title{
+      font-size: clamp(1.4rem, 3.5vw, 2rem); margin: 0 0 .25rem 0; letter-spacing:-.01em;
+    }
+    .section-sub{ margin:0 0 1.4rem 0; color: var(--muted); }
+
+    /* --- Features grid ---------------------------------------------------- */
+    .features{ background: var(--bg-soft); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .grid{
+      display:grid; gap:1rem;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .feature{ grid-column: span 6; background:#fff; border:1px solid var(--border); border-radius:16px; padding:1.1rem 1.1rem 1.2rem; box-shadow: var(--shadow); }
+    .feature h3{ margin:.6rem 0 .25rem; font-size:1.05rem; }
+    .feature p{ margin:.35rem 0 0; color: var(--muted); }
+    .icon{
+      width:26px; height:26px; border-radius:8px; display:grid; place-items:center;
+      background: linear-gradient(180deg, #e6f0ff, #dfeaff); border:1px solid var(--border);
+      color: var(--primary-700);
+    }
+
+    /* --- Steps ------------------------------------------------------------ */
+    .steps{ list-style:none; margin:1.1rem 0 0; padding:0; display:grid; gap:.9rem; }
+    .step{
+      display:flex; gap:.8rem; align-items:flex-start; background:#fff; border:1px solid var(--border);
+      border-radius:14px; padding:.9rem; box-shadow: var(--shadow);
+    }
+    .step-number{
+      flex:0 0 auto; width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+      background: linear-gradient(180deg, #2d6ef2, #1f56e1);
+      color:#fff; font-weight:800;
+      box-shadow: 0 6px 16px rgba(37,99,235,.25);
+    }
+
+    /* --- Download card ---------------------------------------------------- */
+    .download-card{
+      background:#fff; border:1px solid var(--border); border-radius:16px; padding:1.2rem; box-shadow: var(--shadow);
+      display:flex; gap:.8rem; align-items:center; flex-wrap:wrap; justify-content:space-between;
+    }
+    .download-card p{ margin:.2rem 0; color: var(--muted); }
+
+    /* --- Footer ----------------------------------------------------------- */
+    .site-footer{
+      border-top:1px solid var(--border); background:#fff;
+      padding: 2rem 0 3rem;
+    }
+    .footer-inner{ display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+    .footer-nav a{ color: var(--muted); margin-left:.8rem; font-weight:600; }
+
+    /* --- Responsive ------------------------------------------------------- */
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; padding: 3rem 0 2.2rem; }
+    }
+    @media (max-width: 720px){
+      .feature{ grid-column: span 12; }
+      .grid{ grid-template-columns: repeat(6, 1fr); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .button{ transition: none; }
+    }
   </style>
 </head>
 <body>
-  <h1>🌸 Reo — Code Like You Speak</h1>
-  <p><strong>Reo</strong> is a beginner-friendly, natural language programming language and IDE built with love in C#.</p>
-  <p>Write code like you speak:</p>
-  <pre><code>let name be "Joy".
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container nav" role="navigation" aria-label="Main">
+      <a class="brand" href="#top">
+        <span class="brand-badge" aria-hidden="true">🌸</span>
+        <span>Reo</span>
+      </a>
+      <div class="nav-actions">
+        <a class="nav-link" href="#features">Features</a>
+        <a class="nav-link" href="#try">Try</a>
+        <a class="button" href="#download">Download</a>
+      </div>
+    </div>
+
+    <section class="hero container" id="top">
+      <div>
+        <h1>Reo — <span class="accent">Code Like You Speak</span></h1>
+        <p class="lead">
+          <strong>Reo</strong> is a beginner‑friendly, natural language programming language and IDE built with love in C#.
+          Write code like you speak, then click <strong>Compile</strong> and <strong>Run</strong> — Reo takes care of the rest.
+        </p>
+        <div class="cta">
+          <!-- Replace # with your real release links later -->
+          <a class="button primary" href="#" role="button" aria-label="Download ReoSuite">Download ReoSuite</a>
+          <a class="button ghost" href="#try" role="button" aria-label="Open Reo Studio">Open Reo.Studio</a>
+        </div>
+      </div>
+
+      <div class="code-card" aria-label="Code example">
+        <div class="code-titlebar">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="dot" aria-hidden="true"></span>
+          <strong>hello.reo</strong>
+          <button class="copy" type="button" aria-label="Copy example code" id="copyBtn">Copy</button>
+        </div>
+        <pre><code id="example">let name be "Joy".
 say "Hello, " plus name.</code></pre>
-  <p>Then click <strong>Compile</strong> and <strong>Run</strong> — Reo takes care of the rest.</p>
-  <h2>Try Reo Now</h2>
-  <ul>
-    <li>Download the ReoSuite</li>
-    <li>Open <code>Reo.Studio</code></li>
-    <li>Start coding with English-like logic</li>
-  </ul>
-  <p>Made with 💜 by mrxvaau</p>
+      </div>
+    </section>
+  </header>
+
+  <main id="main">
+    <section class="features">
+      <div class="container">
+        <h2 class="section-title">Why Reo?</h2>
+        <p class="section-sub">Clean, approachable, and ready to help you think in logic instead of punctuation.</p>
+
+        <div class="grid">
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="4" width="18" height="12" rx="3" ry="3" stroke-width="1.7"></rect>
+                <path d="M9 20l4-4h5" stroke-width="1.7" stroke-linecap="round"></path>
+                <path d="M7 9h10M7 12h6" stroke-width="1.7" stroke-linecap="round"></path>
+              </svg>
+            </div>
+            <h3>English‑like syntax</h3>
+            <p>Read and write programs with natural phrasing and clear intent.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="9" stroke-width="1.7"></circle>
+                <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"></path>
+              </svg>
+            </div>
+            <h3>Compile & Run</h3>
+            <p>Press <strong>Compile</strong>, then <strong>Run</strong>. Reo handles the plumbing for you.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M4 7h16M4 12h16M4 17h10" stroke-width="1.7" stroke-linecap="round"></path>
+                <rect x="4" y="4" width="16" height="16" rx="3" stroke-width="1.7"></rect>
+              </svg>
+            </div>
+            <h3>Built with C#</h3>
+            <p>Modern tooling, strong typing, and smooth Windows integration.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 17l-5 3 1.4-5.9L4 9.5l6-.5L12 3l2 6 6 .5-4.4 4.6L17 20z" stroke-width="1.7" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <h3>Beginner‑friendly</h3>
+            <p>Gentle learning curve with polished defaults and sensible errors.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" id="try">
+      <h2 class="section-title">Try Reo Now</h2>
+      <p class="section-sub">Get started in under a minute.</p>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-number">1</span>
+          <div>
+            <strong>Download the ReoSuite</strong>
+            <p>Grab the latest release for your system. <a href="#" aria-label="Go to ReoSuite releases">Releases page</a>.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-number">2</span>
+          <div>
+            <strong>Open <code>Reo.Studio</code></strong>
+            <p>Create a new file and paste the example below.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-number">3</span>
+          <div>
+            <strong>Start coding with English‑like logic</strong>
+            <p>Click <em>Compile</em> then <em>Run</em> — see your program come to life.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="container" id="download" aria-label="Download Reo">
+      <div class="download-card">
+        <p><strong>Get ReoSuite</strong><br>Prebuilt binaries and changelogs.</p>
+        <div>
+          <a class="button primary" href="#" aria-label="Download for Windows">Download for Windows</a>
+          <a class="button ghost" href="#" aria-label="View changelog">Changelog</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>Made with 💜 by <a href="https://github.com/mrxvaau" target="_blank" rel="noopener">mrxvaau</a></p>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="#features">Features</a>
+        <a href="#try">Try</a>
+        <a href="#download">Download</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      // Smooth scroll for same-page anchors
+      document.querySelectorAll('a[href^="#"]').forEach(function(link){
+        link.addEventListener('click', function(e){
+          var id = this.getAttribute('href').slice(1);
+          if(!id) return;
+          var el = document.getElementById(id);
+          if(el){
+            e.preventDefault();
+            el.scrollIntoView({behavior: 'smooth', block: 'start'});
+            history.replaceState(null, '', '#' + id);
+          }
+        });
+      });
+
+      // Copy-to-clipboard for code sample
+      var btn = document.getElementById('copyBtn');
+      var code = document.getElementById('example');
+      function fallbackCopy(text){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch(e){}
+        document.body.removeChild(ta);
+      }
+      if(btn && code){
+        btn.addEventListener('click', function(){
+          var text = code.innerText.trim();
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).then(function(){
+              btn.classList.add('copied'); btn.textContent = 'Copied!';
+              setTimeout(function(){ btn.classList.remove('copied'); btn.textContent = 'Copy'; }, 1600);
+            }, function(){ fallbackCopy(text); });
+          } else {
+            fallbackCopy(text);
+          }
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
